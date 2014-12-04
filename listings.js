@@ -4,7 +4,6 @@ var db = require('./db');
 
 update = function(callback) {
     var retrieveNewListings = function() {
-        console.log('TODO: retrieveNewListings');
         db.retrieveAvailableChainListings(function(err, programmeSources) {
             if (err) {
                 callback(err);
@@ -53,11 +52,13 @@ update = function(callback) {
         var parsedUrl = url.parse(chain.source);
 
         console.log('INFO: checking chain: ' + chain.source);
-        retrieveJson(parsedUrl.host, parsedUrl.pathname, function(data, err) {  
+        retrieveJson(parsedUrl.host, parsedUrl.pathname, function(data, err) {
             if (err) {
                 callback(err);
                 return;
             }
+
+            console.log('INFO: got data for: ' + chain.source);
 
             var retrievedChain = {
                 source: 'http://' + parsedUrl.host + parsedUrl.pathname,
@@ -66,9 +67,11 @@ update = function(callback) {
             
             if (data.programme.peers.previous) {
                 retrievedChain.previous = 'http://open.live.bbc.co.uk/aps/programmes/' + data.programme.peers.previous.pid + '.json';
+                console.log('INFO: chain has previous: ' + retrievedChain.previous);
             }
             if (data.programme.peers.next) {
                 retrievedChain.next = 'http://open.live.bbc.co.uk/aps/programmes/' + data.programme.peers.next.pid + '.json';
+                console.log('INFO: chain has next:     ' + retrievedChain.next);
             }
             
             if (retrievedChain.next) {
@@ -329,6 +332,7 @@ function addProgrammeToDb(programme, callback) {
 }
 
 function retrieveBbcListing(host, pathname, options, callback) {   
+    console.log('INFO: retrieval: host: ' + host + ', pathname: ' + pathname);
     retrieveJson(host, pathname, function(programmeData, err) {
         if (!programmeData) {
             callback('Problem retrieving JSON: ' + err);

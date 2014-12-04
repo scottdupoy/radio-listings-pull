@@ -269,6 +269,7 @@ exports.retrieveChainsToRetrieve = function(callback) {
         
         var chains = [];
         result.rows.forEach(function(row) {
+            console.log('INFO: db chain source: ' + row.source + ', reretrieval: ' + row.reretrieval);
             chains.push({ source: row.source, reretrieval: row.reretrieval });
         });
         callback(null, chains);
